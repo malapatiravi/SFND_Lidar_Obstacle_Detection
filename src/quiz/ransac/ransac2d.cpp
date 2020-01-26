@@ -215,7 +215,7 @@ int main()
 	pcl::PointCloud<pcl::PointXYZ>::Ptr cloud = CreateData();
 	int one, two;
 	// TODO: Change the max iteration and distance tolerance arguments for Ransac function
-	std::unordered_set<int> inliers = Ransac(cloud, 100, 2.0, one, two);
+	std::unordered_set<int> inliers = RansacLine(cloud, 100, 2.0, one, two);
 	//std::unordered_set<int> inliers = RansacPlane(cloud, 100, 2.0);
 
 	pcl::PointCloud<pcl::PointXYZ>::Ptr cloudInliers(new pcl::PointCloud<pcl::PointXYZ>());
