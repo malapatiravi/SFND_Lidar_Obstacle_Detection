@@ -1,3 +1,0 @@
-/home/malz/Documents/SensorFusionCourse/Project1/SFND_Lidar_Obstacle_Detection-master/src/quiz/ransac/build/CMakeFiles/rebuild_cache.dir
-/home/malz/Documents/SensorFusionCourse/Project1/SFND_Lidar_Obstacle_Detection-master/src/quiz/ransac/build/CMakeFiles/quizRansac.dir
-/home/malz/Documents/SensorFusionCourse/Project1/SFND_Lidar_Obstacle_Detection-master/src/quiz/ransac/build/CMakeFiles/edit_cache.dir
