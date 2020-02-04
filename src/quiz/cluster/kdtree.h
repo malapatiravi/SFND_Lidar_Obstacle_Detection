@@ -26,6 +26,27 @@ struct KdTree
 	{
 	}
 
+
+	bool isInDistance(std::vector<float> target, std::vector<float> point, float distanceTol)
+	{
+		float x_dist = point[0]-target[0];
+		float y_dist = point[1]-target[1];
+		float z_dist = point[2]-target[2];
+
+		return ((x_dist*x_dist)+ (y_dist*y_dist) /* + (z_dist*z_dist) */) <= (distanceTol*distanceTol);
+
+
+	}
+	bool isInBox(std::vector<float> target, std::vector<float> point, float distanceTol)
+	{
+		bool inBox = true;
+		// for(int i = 0; i < target.size()-1; i++)
+		// {
+			inBox = inBox && (point[0] <= (target[0] + distanceTol)) && (point[0] >= (target[0]-distanceTol));
+			inBox = inBox && (point[1] <= (target[1] + distanceTol)) && (point[1] >= (target[1]-distanceTol));
+		//}
+		return inBox;
+	}
 	void insertRecHelper(Node **rootP, std::vector<float> point, int id, int depth)
 	{
 		if (*rootP == NULL)
@@ -53,25 +74,7 @@ struct KdTree
 		// the function should create a new node and place correctly with in the root
 		insertRecHelper(&root, point, id, 0);
 	}
-	bool isInBox(std::vector<float> target, std::vector<float> point, float distanceTol)
-	{
-		bool inBox = true;
-		for(int i = 0; i < target.size(); i++)
-		{
-			inBox = inBox && (point[i] <= (target[i] + distanceTol)) && (point[i] >= (target[i]-distanceTol));
-		}
-		return inBox;
-	}
-	bool isInDistance(std::vector<float> target, std::vector<float> point, float distanceTol)
-	{
-		float x_dist = point[0]-target[0];
-		float y_dist = point[1]-target[1];
-		float z_dist = point[2]-target[2];
 
-		return ((x_dist*x_dist)+ (y_dist*y_dist) + (z_dist*z_dist) ) <= (distanceTol*distanceTol);
-
-
-	}
 	void searchRecHelper(std::vector<float> target, float distanceTol, Node* node, int depth, std::vector<int>& ids)
 	{
 		if(node != NULL)
@@ -104,7 +107,7 @@ struct KdTree
 	{
 		std::vector<int> ids;
 
-
+		searchRecHelper(target, distanceTol, root, 0, ids);
 		return ids;
 	}
 };
