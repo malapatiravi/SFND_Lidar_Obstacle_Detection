@@ -1,11 +1,11 @@
 /* \author Aaron Brown */
 // Quiz on implementing simple RANSAC line fitting
 
-#include "../../render/render.h"
+#include "render/render.h"
 #include <unordered_set>
-#include "../../processPointClouds.h"
+#include "processPointClouds.h"
 // using templates for processPointClouds so also include .cpp to help linker
-#include "../../processPointClouds.cpp"
+#include "processPointClouds.cpp"
 
 pcl::PointCloud<pcl::PointXYZ>::Ptr CreateData()
 {
@@ -205,48 +205,49 @@ std::unordered_set<int> RansacPlane(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud, i
 
 	return inliersResult_res;
 }
-int main()
-{
 
-	// Create viewer
-	pcl::visualization::PCLVisualizer::Ptr viewer = initScene();
+// int main()
+// {
 
-	// Create data
-	pcl::PointCloud<pcl::PointXYZ>::Ptr cloud = CreateData3D();
-	int one, two;
-	// TODO: Change the max iteration and distance tolerance arguments for Ransac function
-	// std::unordered_set<int> inliers = RansacLine(cloud, 100, 2.0, one, two);
-	std::unordered_set<int> inliers = RansacPlane(cloud, 100, 0.2);
+// 	// Create viewer
+// 	pcl::visualization::PCLVisualizer::Ptr viewer = initScene();
 
-	pcl::PointCloud<pcl::PointXYZ>::Ptr cloudInliers(new pcl::PointCloud<pcl::PointXYZ>());
-	pcl::PointCloud<pcl::PointXYZ>::Ptr cloudOutliers(new pcl::PointCloud<pcl::PointXYZ>());
+// 	// Create data
+// 	pcl::PointCloud<pcl::PointXYZ>::Ptr cloud = CreateData3D();
+// 	int one, two;
+// 	// TODO: Change the max iteration and distance tolerance arguments for Ransac function
+// 	// std::unordered_set<int> inliers = RansacLine(cloud, 100, 2.0, one, two);
+// 	std::unordered_set<int> inliers = RansacPlane(cloud, 100, 0.2);
 
-	for (int index = 0; index < cloud->points.size(); index++)
-	{
-		pcl::PointXYZ point = cloud->points[index];
-		if (inliers.count(index))
-			cloudInliers->points.push_back(point);
-		else
-			cloudOutliers->points.push_back(point);
-	}
-	//Print the line points in blue
-	// pcl::PointCloud<pcl::PointXYZ>::Ptr linePoints(new pcl::PointCloud<pcl::PointXYZ>());
-	// linePoints->points.push_back(cloud->points[one]);
-	// linePoints->points.push_back(cloud->points[two]);
-	// Render 2D point cloud with inliers and outliers
-	if (inliers.size())
-	{
-		renderPointCloud(viewer, cloudInliers, "inliers", Color(0, 1, 0));
-		renderPointCloud(viewer, cloudOutliers, "outliers", Color(1, 0, 0));
-		// renderPointCloud(viewer, linePoints, "linepoints", Color(0, 0, 1));
-	}
-	else
-	{
-		renderPointCloud(viewer, cloud, "data");
-	}
+// 	pcl::PointCloud<pcl::PointXYZ>::Ptr cloudInliers(new pcl::PointCloud<pcl::PointXYZ>());
+// 	pcl::PointCloud<pcl::PointXYZ>::Ptr cloudOutliers(new pcl::PointCloud<pcl::PointXYZ>());
 
-	while (!viewer->wasStopped())
-	{
-		viewer->spinOnce();
-	}
-}
+// 	for (int index = 0; index < cloud->points.size(); index++)
+// 	{
+// 		pcl::PointXYZ point = cloud->points[index];
+// 		if (inliers.count(index))
+// 			cloudInliers->points.push_back(point);
+// 		else
+// 			cloudOutliers->points.push_back(point);
+// 	}
+// 	//Print the line points in blue
+// 	// pcl::PointCloud<pcl::PointXYZ>::Ptr linePoints(new pcl::PointCloud<pcl::PointXYZ>());
+// 	// linePoints->points.push_back(cloud->points[one]);
+// 	// linePoints->points.push_back(cloud->points[two]);
+// 	// Render 2D point cloud with inliers and outliers
+// 	if (inliers.size())
+// 	{
+// 		renderPointCloud(viewer, cloudInliers, "inliers", Color(0, 1, 0));
+// 		renderPointCloud(viewer, cloudOutliers, "outliers", Color(1, 0, 0));
+// 		// renderPointCloud(viewer, linePoints, "linepoints", Color(0, 0, 1));
+// 	}
+// 	else
+// 	{
+// 		renderPointCloud(viewer, cloud, "data");
+// 	}
+
+// 	while (!viewer->wasStopped())
+// 	{
+// 		viewer->spinOnce();
+// 	}
+// }

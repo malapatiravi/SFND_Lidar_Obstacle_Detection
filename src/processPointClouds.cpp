@@ -1,6 +1,12 @@
 // PCL lib Functions for processing point clouds
 
 #include "processPointClouds.h"
+// #ifndef CUSTOM_PCL
+// #define CUSTOM_PCL
+// #endif
+#ifndef MAIN_PCL
+#define MAIN_PCL
+#endif
 
 //constructor:
 template <typename PointT>
@@ -25,7 +31,7 @@ typename pcl::PointCloud<PointT>::Ptr ProcessPointClouds<PointT>::FilterCloud(ty
 
     // TODO:: Fill in the function to do voxel grid point reduction and region based filtering
 
-    typename pcl::VoxelGrid<PointT> gridObj{};
+    typename pcl::VoxelGrid<PointT> vGridObj{};
     typename pcl::CropBox<PointT> boxObj{};
     typename pcl::CropBox<PointT> roofObj{};
 
@@ -37,9 +43,9 @@ typename pcl::PointCloud<PointT>::Ptr ProcessPointClouds<PointT>::FilterCloud(ty
     typename pcl::PointIndices::Ptr inliers{new pcl::PointIndices};
     boost::shared_ptr<std::vector<int>> roofIndices{new std::vector<int>};
 
-    gridObj.setInputCloud(cloud);
-    gridObj.setLeafSize(filterRes, filterRes, filterRes);
-    gridObj.filter(*downSampledCloud);
+    vGridObj.setInputCloud(cloud);
+    vGridObj.setLeafSize(filterRes, filterRes, filterRes);
+    vGridObj.filter(*downSampledCloud);
 
     boxObj.setInputCloud(downSampledCloud);
     boxObj.setMin(minPoint);
