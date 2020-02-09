@@ -6,7 +6,7 @@
 #include "render/render.h"
 #include "processPointClouds.h"
 // using templates for processPointClouds so also include .cpp to help linker
-#include "processPointClouds.cpp"
+//#include "processPointClouds.cpp"
 // #ifndef CUSTOM_PCL
 // #define CUSTOM_PCL
 // #endif
@@ -43,23 +43,26 @@ void cityblock(pcl::visualization::PCLVisualizer::Ptr &viewer, ProcessPointCloud
 
     inputCloud = pointProcessorI.FilterCloud(inputCloud, 0.32f, Eigen::Vector4f(-10, -5, -2, 1), Eigen::Vector4f(30, 7, 1, 1));
 
-    std::pair<pcl::PointCloud<pcl::PointXYZI>::Ptr, pcl::PointCloud<pcl::PointXYZI>::Ptr> segmentCloud = pointProcessorI.SegmentPlane(inputCloud, 100, 0.2);
+    //std::pair<pcl::PointCloud<pcl::PointXYZI>::Ptr, pcl::PointCloud<pcl::PointXYZI>::Ptr> segmentCloud = pointProcessorI.SegmentPlane(inputCloud, 100, 0.2);
+    std::pair<pcl::PointCloud<pcl::PointXYZI>::Ptr, pcl::PointCloud<pcl::PointXYZI>::Ptr> segmentCloud = pointProcessorI.customSegmentPlane(inputCloud, 100, 0.4);
+    
     renderPointCloud(viewer, segmentCloud.first, "obstCloud", Color(1, 0, 0));
     renderPointCloud(viewer, segmentCloud.second, "planeCloud", Color(0, 1, 0));
 
-    std::vector<pcl::PointCloud<pcl::PointXYZI>::Ptr> cloudclusters = pointProcessorI.Clustering(segmentCloud.first, 0.62, 7, 550);
-    int clusterId = 0;
-    std::vector<Color> colors = {Color(1, 0, 0), Color(0, 1, 0), Color(0, 0, 1)};
+    // std::vector<pcl::PointCloud<pcl::PointXYZI>::Ptr> cloudclusters = pointProcessorI.Clustering(segmentCloud.first, 0.62, 7, 550);
+    // //std::vector<pcl::PointCloud<pcl::PointXYZI>::Ptr> cloudclusters = pointProcessorI.customClustering(segmentCloud.first, 0.62, 7, 550);
+    // int clusterId = 0;
+    // std::vector<Color> colors = {Color(1, 0, 0), Color(0, 1, 0), Color(0, 0, 1)};
 
-    for (pcl::PointCloud<pcl::PointXYZI>::Ptr cluster : cloudclusters)
-    {
-        std::cout << "cluster size ";
-        pointProcessorI.numPoints(cluster);
-        renderPointCloud(viewer, cluster, "obstCloud" + std::to_string(clusterId), colors[clusterId]);
-        Box box = pointProcessorI.BoundingBox(cluster);
-        renderBox(viewer, box, clusterId);
-        ++clusterId;
-    }
+    // for (pcl::PointCloud<pcl::PointXYZI>::Ptr cluster : cloudclusters)
+    // {
+    //     std::cout << "cluster size ";
+    //     pointProcessorI.numPoints(cluster);
+    //     renderPointCloud(viewer, cluster, "obstCloud" + std::to_string(clusterId), colors[clusterId]);
+    //     Box box = pointProcessorI.BoundingBox(cluster);
+    //     renderBox(viewer, box, clusterId);
+    //     ++clusterId;
+    // }
 }
 
 void simpleHighway(pcl::visualization::PCLVisualizer::Ptr &viewer)
