@@ -248,7 +248,7 @@ std::vector<typename pcl::PointCloud<PointT>::Ptr> ProcessPointClouds<PointT>::c
 
     KdTree tree;
     insertCloud<PointT>(cloud, &tree);
-    euclideanCluster2D<PointT>(cloud, &tree, 3, maxSize, minSize, vec_cluster_indices);
+    euclideanCluster2D<PointT>(cloud, &tree, clusterTolerance, maxSize, minSize, vec_cluster_indices);
 
     for (pcl::PointIndices getIndices : vec_cluster_indices)
     {

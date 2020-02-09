@@ -5,10 +5,7 @@
 
 #include "kdtree.h"
 
-
-
 // using templates for processPointClouds so also include .cpp to help linker
-
 
 std::vector<float> getLineEq(pcl::PointXYZ first, pcl::PointXYZ second)
 {
@@ -85,35 +82,32 @@ std::unordered_set<int> RansacLine(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud, in
 	return *inliersResult_res;
 }
 
-template<typename PointT>
+template <typename PointT>
 float getPlaneDistance(std::vector<float> plane, PointT p)
 {
 	float dist = std::fabs(plane[0] * p.x + plane[1] * p.y + plane[2] * p.z + plane[3]) / std::sqrt(plane[0] * plane[0] + plane[1] * plane[1] + plane[2] * plane[2]);
 	return dist;
 }
 
-template<typename PointT>
-std::vector<float> getPlane(PointT first, PointT second, PointT third)
+template <typename PointT>
+void getPlane(PointT first, PointT second, PointT third, std::vector<float> &res)
 {
-	std::vector<float> res;
-	int x1 = first.x, y1 = first.y, z1 = first.z;
-	int x2 = second.x, y2 = second.y, z2 = second.z;
-	int x3 = third.x, y3 = third.y, z3 = third.z;
+	
+	float x1 = first.x, y1 = first.y, z1 = first.z;
+	float x2 = second.x, y2 = second.y, z2 = second.z;
+	float x3 = third.x, y3 = third.y, z3 = third.z;
 	float A = (y2 - y1) * (z3 - z1) - (z2 - z1) * (y3 - y1);
 	float B = (z2 - z1) * (x3 - x1) - (x2 - x1) * (z3 - z1);
 	float C = (x2 - x1) * (y3 - y1) - (y2 - y1) * (x3 - x1);
-	float D = -(A * x1 + B * y1 + C * z1);
+	float D = -((A * x1) + (B * y1) + (C * z1));
 
 	res.push_back(A);
 	res.push_back(B);
 	res.push_back(C);
 	res.push_back(D);
-
-	return res;
 }
 
-
-template<typename PointT>
+template <typename PointT>
 std::vector<int> RansacPlane(typename pcl::PointCloud<PointT>::Ptr cloud, int maxIterations, float distanceTol)
 {
 	std::vector<int> inliersResult_res;
@@ -121,47 +115,59 @@ std::vector<int> RansacPlane(typename pcl::PointCloud<PointT>::Ptr cloud, int ma
 	auto startTime = std::chrono::steady_clock::now();
 	srand(time(NULL));
 
+	std::size_t cloudSize = cloud->size();
+
+	typedef std::unordered_set<std::tuple<std::size_t, std::size_t, std::size_t>, boost::hash<std::tuple<size_t, size_t, size_t>>> my_set_t;
+	my_set_t visited_point_set;
+
 	while (maxIterations--)
 	{
-		int ind_i = 0;
-		int ind_j = 0;
-		int ind_k = 0;
-		
-		std::vector<int> inliersResult_temp ;
+		std::size_t ind_i = 0;
+		std::size_t ind_j = 0;
+		std::size_t ind_k = 0;
+		std::tuple<size_t, size_t, size_t> ind_tuple;
 
-		ind_i = std::rand() % cloud->points.size();
-		do
-		{
-			ind_j = std::rand() % cloud->points.size();
-		} while (ind_i == ind_j);
+		std::vector<int> inliersResult_temp;
+		my_set_t::iterator findItr;
 
 		do
 		{
-			ind_k = std::rand() % cloud->points.size();
-		} while (ind_k == ind_j || ind_k == ind_i);
+			ind_i = std::rand() % cloudSize;
+			ind_j = std::rand() % cloudSize;
+			ind_k = std::rand() % cloudSize;
+			ind_tuple = std::make_tuple(ind_i, ind_j, ind_k);
 
-		std::vector<float> plane = getPlane(cloud->points[ind_i], cloud->points[ind_j], cloud->points[ind_k]);
-		for(int ind = 0; ind < cloud->points.size(); ind++)
+			findItr = visited_point_set.find(ind_tuple);
+
+		} while ((visited_point_set.size() != 0) && (findItr != visited_point_set.end() ||
+													 ind_i == ind_j || ind_j == ind_k || ind_k == ind_i));
+
+		visited_point_set.insert(ind_tuple);
+
+		std::vector<float> plane;
+		getPlane<PointT>(cloud->points[ind_i], cloud->points[ind_j], cloud->points[ind_k], plane);
+
+		for (int ind = 0; ind < cloud->points.size(); ind++)
 		{
 			/*get distance*/
-			float dist = getPlaneDistance(plane, cloud->points[ind]);
-			if(dist <= distanceTol)
+			float dist = getPlaneDistance<PointT>(plane, cloud->points[ind]);
+			if (dist <= distanceTol)
 			{
 				inliersResult_temp.push_back(ind);
-
 			}
 		}
-		if(inliersResult_temp.size() > inliersResult_res.size())
+		if (inliersResult_temp.size() > inliersResult_res.size())
 		{
 			inliersResult_res = inliersResult_temp;
 		}
 	}
-	std::cout<<"The final size is: "<<inliersResult_res.size()<<std::endl;
+	std::cout << "The final size is: " << inliersResult_res.size() << std::endl;
 	auto endTime = std::chrono::steady_clock::now();
 	auto elapsedTime = std::chrono::duration_cast<std::chrono::milliseconds>(endTime - startTime);
 	std::cout << "plane segmentation took " << elapsedTime.count() << " milliseconds" << std::endl;
 
 	return inliersResult_res;
 }
+
 
 #endif

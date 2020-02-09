@@ -73,11 +73,11 @@ struct KdTree
 		{
 
 			//Compare Y
-			if (point[depth % 2] < (*rootP)->point[depth % 2])
+			if (point[depth % 3] < (*rootP)->point[depth % 3])
 			{
 				insertRecHelper(&(*rootP)->left, point, id, depth + 1);
 			}
-			if (point[depth % 2] >= (*rootP)->point[depth % 2])
+			if (point[depth % 3] >= (*rootP)->point[depth % 3])
 			{
 				insertRecHelper(&(*rootP)->right, point, id, depth + 1);
 			}
@@ -104,11 +104,11 @@ struct KdTree
 				}
 			}
 
-			if ((target[depth % 2] - distanceTol) < node->point[depth % 2])
+			if ((target[depth % 3] - distanceTol) < node->point[depth % 3])
 			{
 				searchRecHelper(target, distanceTol, node->left, depth + 1, ids);
 			}
-			if ((target[depth % 2] + distanceTol) > node->point[depth % 2])
+			if ((target[depth % 3] + distanceTol) > node->point[depth % 3])
 			{
 				searchRecHelper(target, distanceTol, node->right, depth + 1, ids);
 			}

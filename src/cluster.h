@@ -17,7 +17,7 @@ void proximity2D(typename pcl::PointCloud<PointT>::Ptr cloud, KdTree *tree, floa
 	{
 		cluster.push_back(i);
 		visited_set[i] = true;
-		std::vector<float> point{cloud->at(i).x, cloud->at(i).x, cloud->at(i).z};
+		std::vector<float> point{cloud->at(i).x, cloud->at(i).y, cloud->at(i).z};
 
 		std::vector<int> nearby_points = tree->search(point, distanceTol);
 		for (int it = 0; it < nearby_points.size(); it++)
